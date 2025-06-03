@@ -1,28 +1,30 @@
+# Znanstveno računanje
+
 Projekt prikazuje distribuirani sustav za znanstveno računanje temeljen na modelu Master-Worker. Sustav se sastoji od:
-- jednog procesa Master
-- više procesa Worker 
+- jednog procesa **Master**
+- više procesa **Worker**
 
 Master dijeli zadatak na podzadatke, šalje ih radnicima i prikuplja rezultate te ih spaja u odgovor.
 
-Podržani računski zadaci:
+## Podržani računski zadaci:
 - Traženje nultočaka neprekidne funkcije metodom bisekcije
 - Faktorizacija cijelog broja
 
-POKRETANJE
+## POKRETANJE
 
-1. Kompajliranje svih .java datoteka
+### 1. Kompajliranje svih `.java` datoteka
+```bash
+javac *.java
+```
+### 2. Pokretanje Master procesa
 
-javac \*.java
-
-2. Pokretanje Master procesa
-
-Primjer: traženje nultočaka funkcije f(x) = x^3 - x - 2 -> java Master zero <N> <a> <b> <epsilon>
+Primjer: traženje nultočaka funkcije f(x) = x^3 - x - 2 -> java Master zero &ltN&gt &lta&gt &ltb&gt &ltepsilon&gt
 java Master zero 4 1.0 2.0 1e-6
 
-Primjer: faktorizacija broja 13195 -> java Master factor <N> <broj>
+Primjer: faktorizacija broja 13195 -> java Master factor &ltN&gt &ltbroj&gt
 java Master 4 13195
 
-3. Pokretanje Workera u zasebnim terminalima
+### 3. Pokretanje Workera u zasebnim terminalima
 
 Primjer: za 3 workera je N = 4 ( 3 workera + 1 master )
 java Worker 1 4
