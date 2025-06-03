@@ -18,15 +18,25 @@ javac *.java
 ```
 ### 2. Pokretanje Master procesa
 
-Primjer: traženje nultočaka funkcije f(x) = x^3 - x - 2 -> java Master zero &ltN&gt &lta&gt &ltb&gt &ltepsilon&gt
+Primjer: traženje nultočaka funkcije f(x) = x^3 - x - 2 -> `java Master zero <N> <a> <b> <epsilon>`
+```bash
 java Master zero 4 1.0 2.0 1e-6
+```
 
-Primjer: faktorizacija broja 13195 -> java Master factor &ltN&gt &ltbroj&gt
+Primjer: faktorizacija broja 13195 -> `java Master factor <N> <broj>`
+```bash
 java Master 4 13195
+```
 
 ### 3. Pokretanje Workera u zasebnim terminalima
 
 Primjer: za 3 workera je N = 4 ( 3 workera + 1 master )
+```bash
 java Worker 1 4
+```
+```bash
 java Worker 2 4
+```
+```bash
 java Worker 3 4
+```
