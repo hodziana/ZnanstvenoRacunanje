@@ -1,62 +1,97 @@
-import java.io.*;
-import java.net.*;
 import java.util.*;
 
 public class Master {
-
-    private List<Socket> workers = new ArrayList<>();
-    private int numberOfWorkers;
-
-    public Master(int numberOfWorkers) {
-        this.numberOfWorkers = numberOfWorkers;
-    }
-
-    public void startServer(int port) throws IOException {
-        ServerSocket serverSocket = new ServerSocket(port);
-        System.out.println("Master started. Waiting for workers...");
-
-        while (workers.size() < numberOfWorkers) {
-            Socket workerSocket = serverSocket.accept();
-            System.out.println("Worker connected: " + workerSocket);
-            workers.add(workerSocket);
-        }
-    }
-
-    public void dispatchTasks(List<Task> tasks) throws IOException, ClassNotFoundException {
-        for (int i = 0; i < tasks.size(); i++) {
-            Socket worker = workers.get(i % numberOfWorkers);
-            sendTask(worker, tasks.get(i));
-        }
-
-        for (int i = 0; i < tasks.size(); i++) {
-            Socket worker = workers.get(i % numberOfWorkers);
-            Object result = receiveResult(worker);
-            System.out.println("Result from worker " + (i % numberOfWorkers) + ": " + result);
-        }
-    }
-
-    private void sendTask(Socket socket, Task task) throws IOException {
-        ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-        out.writeObject(task);
-        out.flush();
-    }
-
-    private Object receiveResult(Socket socket) throws IOException, ClassNotFoundException {
-        ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
-        return in.readObject();
-    }
-
     public static void main(String[] args) throws Exception {
-        Master master = new Master(3); // npr. 3 radnika
-        master.startServer(5000);
-
-        List<Task> tasks = new ArrayList<>();
-        // Privremeni primjer zadatka:
-        for (int i = 0; i < 3; i++) {
-            final int taskId = i; 
-            tasks.add(() -> "Hello from task " + taskId);
+        if (args.length < 2) {
+            System.out.println("Usage:");
+            System.out.println("  java Master zero <N> <a> <b> <epsilon>");
+            System.out.println("  java Master factor <N> <number>");
+            return;
         }
 
-        master.dispatchTasks(tasks);
+        String mode = args[0];
+        int N = Integer.parseInt(args[1]);
+        Linker linker = new Linker(0, N);
+
+        if (mode.equals("zero")) {
+            if (args.length != 5) {
+                System.out.println("Expected: zero <N> <a> <b> <epsilon>");
+                return;
+            }
+
+            System.out.println("Running in ZERO mode...");
+
+            double a = Double.parseDouble(args[2]);
+            double b = Double.parseDouble(args[3]);
+            double epsilon = Double.parseDouble(args[4]);
+            int workers = N - 1;
+
+            System.out.println("Interval: [" + a + ", " + b + "]");
+            System.out.println("Epsilon: " + epsilon);
+            System.out.println("Total workers: " + workers);
+
+            double step = (b - a) / workers;
+
+            List<Task> tasks = new ArrayList<>();
+            for (int i = 0; i < workers; i++) {
+                double start = a + i * step;
+                double end = start + step;
+                System.out.printf("Created task %d: [%.6f, %.6f]%n", i + 1, start, end);
+                tasks.add(new ZeroTask(start, end, epsilon));
+            }
+
+            for (int i = 0; i < workers; i++) {
+                System.out.println("Sending task to worker " + (i + 1));
+                linker.sendMessage(i + 1, "task", tasks.get(i));
+            }
+
+            for (int i = 0; i < workers; i++) {
+                System.out.println("Waiting result from worker " + (i + 1));
+                Object result = linker.receiveMessage(i + 1, "result");
+                System.out.println("Result from worker " + (i + 1) + ": " + result);
+            }
+        }
+
+
+        else if (mode.equals("factor")) {
+            if (args.length != 3) {
+                System.out.println("Expected: factor <N> <number>");
+                return;
+            }
+
+            long numberToFactor = Long.parseLong(args[2]);
+            long sqrt = (long) Math.sqrt(numberToFactor);
+            int workers = N - 1;
+            long step = sqrt / workers;
+
+            List<Task> tasks = new ArrayList<>();
+            for (int i = 0; i < workers; i++) {
+                long from = 2 + i * step;
+                long to = (i == workers - 1) ? sqrt : from + step - 1;
+                tasks.add(new FactorTask(numberToFactor, from, to));
+            }
+
+            for (int i = 0; i < workers; i++) {
+                linker.sendMessage(i + 1, "task", tasks.get(i));
+            }
+
+            List<Long> allFactors = new ArrayList<>();
+            for (int i = 0; i < workers; i++) {
+                Object result = linker.receiveMessage(i + 1, "result");
+                if (result instanceof List<?> list) {
+                    for (Object o : list) {
+                        if (o instanceof Long l) {
+                            allFactors.add(l);
+                        }
+                    }
+                }
+            }
+
+            System.out.println("Prosti faktori: " + allFactors);
+        }
+
+        for (int i = 1; i < N; i++) {
+            linker.sendMessage(i, "task", "terminate");
+        }
     }
 }

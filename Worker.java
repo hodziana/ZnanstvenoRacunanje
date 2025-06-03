@@ -1,20 +1,28 @@
-import java.io.*;
-import java.net.*;
-
 public class Worker {
-
     public static void main(String[] args) throws Exception {
-        Socket socket = new Socket("localhost", 5000);
-        System.out.println("Worker connected to master.");
+        int myId = Integer.parseInt(args[0]);
+        int N = Integer.parseInt(args[1]);
 
-        ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
-        ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+        Linker linker = new Linker(myId, N);
+        System.out.println("Process " + myId + " connected.");
 
         while (true) {
-            Task task = (Task) in.readObject();
-            Object result = task.execute();
-            out.writeObject(result);
-            out.flush();
+            System.out.println("Worker " + myId + " waiting for task...");
+            Object obj = linker.receiveMessage(0, "task");
+
+            if (obj instanceof String s && s.equals("terminate")) {
+                System.out.println("Worker " + myId + " shutting down.");
+                break;
+            }
+
+            if (obj instanceof Task task) {
+                System.out.println("Worker " + myId + " executing task...");
+                Object result = task.execute();
+                linker.sendMessage(0, "result", result);
+                System.out.println("Worker " + myId + " sent result.");
+            } else {
+                System.out.println("Worker " + myId + " received unknown object: " + obj);
+            }
         }
     }
 }
