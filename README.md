@@ -12,7 +12,7 @@ POKRETANJE
 
 1. Kompajliranje svih .java datoteka
 
-javac *.java
+javac \*.java
 
 2. Pokretanje Master procesa
 
