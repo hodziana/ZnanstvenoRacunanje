@@ -18,14 +18,19 @@ javac *.java
 ```
 ### 2. Pokretanje Master procesa
 
-Primjer: traženje nultočaka funkcije f(x) = x^3 - x - 2 -> `java Master zero <N> <a> <b> <epsilon>`
+Primjer: traženje nultočaka funkcije f(x) = x^3 - x - 2 -> `java Master zero <N> <a> <b> <epsilon> [funkcija]`
+
 ```bash
-java Master zero 4 1.0 2.0 1e-6
+java Master zero 4 1.0 2.0 1e-6 sin
 ```
+Podržane funkcije:
+- cubic
+- sin
+- exp
 
 Primjer: faktorizacija broja 13195 -> `java Master factor <N> <broj>`
 ```bash
-java Master 4 13195
+java Master factor 4 13195
 ```
 
 ### 3. Pokretanje Workera u zasebnim terminalima

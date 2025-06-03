@@ -1,4 +1,5 @@
 import java.util.*;
+import functions.MathFunction;
 
 public class Master {
     public static void main(String[] args) throws Exception {
@@ -14,8 +15,8 @@ public class Master {
         Linker linker = new Linker(0, N);
 
         if (mode.equals("zero")) {
-            if (args.length != 5) {
-                System.out.println("Expected: zero <N> <a> <b> <epsilon>");
+            if (args.length != 6) {
+                System.out.println("Expected: zero <N> <a> <b> <epsilon> [sin|exp|cubic]");
                 return;
             }
 
@@ -24,6 +25,15 @@ public class Master {
             double a = Double.parseDouble(args[2]);
             double b = Double.parseDouble(args[3]);
             double epsilon = Double.parseDouble(args[4]);
+            String funcName = args[5];
+
+            MathFunction f;
+            switch (funcName.toLowerCase()) {
+                case "sin":    f = new functions.SinFunction();        break;
+                case "exp":    f = new functions.ExpMinusTwoFunction();  break;
+                case "cubic":
+                default:       f = new functions.CubicFunction();      break;
+            }
             int workers = N - 1;
 
             System.out.println("Interval: [" + a + ", " + b + "]");
@@ -37,7 +47,7 @@ public class Master {
                 double start = a + i * step;
                 double end = start + step;
                 System.out.printf("Created task %d: [%.6f, %.6f]%n", i + 1, start, end);
-                tasks.add(new ZeroTask(start, end, epsilon));
+                tasks.add(new ZeroTask(start, end, epsilon, f));
             }
 
             for (int i = 0; i < workers; i++) {
