@@ -18,17 +18,22 @@ javac *.java
 ```
 ### 2. Pokretanje Master procesa
 
-Primjer: traženje nultočaka funkcije f(x) = x^3 - x - 2 -> `java Master zero <N> <a> <b> <epsilon> [funkcija]`
+Primjer: traženje nultočaka funkcije `java Master zero <N> <a> <b> <epsilon> [funkcija]`
+
+- N – ukupan broj procesa (1 master + N-1 workera)
+- a, b – granice intervala
+- epsilon – tolerancija za metodu bisekcije
+- funkcija - sin/exp/cubic
 
 ```bash
 java Master zero 4 1.0 2.0 1e-6 sin
 ```
-Podržane funkcije:
-- cubic
-- sin
-- exp
 
-Primjer: faktorizacija broja 13195 -> `java Master factor <N> <broj>`
+Primjer: faktorizacija broja -> `java Master factor <N> <broj>`
+
+- N – ukupan broj procesa (1 master + N-1 workera)
+- broj - broj koji želimo faktorizirati
+
 ```bash
 java Master factor 4 13195
 ```
@@ -44,4 +49,19 @@ java Worker 2 4
 ```
 ```bash
 java Worker 3 4
+```
+
+### 4. Testovi
+
+U folderu tests nalaze se testovi za ZeroTask i FactorTask.
+
+Kompajliranje:
+```bash
+javac tests/*.java
+```
+
+Pokretanje:
+```bash
+java tests.ZeroTest
+java tests.FactorTest
 ```

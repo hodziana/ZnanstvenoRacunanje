@@ -1,5 +1,8 @@
 import java.util.*;
 import functions.MathFunction;
+import tasks.Task;
+import tasks.FactorTask;
+import tasks.ZeroTask;
 
 public class Master {
     public static void main(String[] args) throws Exception {

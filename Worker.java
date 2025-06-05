@@ -1,3 +1,5 @@
+import tasks.Task;
+
 public class Worker {
     public static void main(String[] args) throws Exception {
         int myId = Integer.parseInt(args[0]);
