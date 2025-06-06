@@ -13,18 +13,18 @@ public class FactorTest {
         Object result = task.execute();
 
         if (result instanceof List<?> list) {
-            System.out.println("Faktori: " + list);
+            System.out.println("Factors: " + list);
             boolean passed = list.contains(5L) && list.contains(7L)
                     && list.contains(13L) && list.contains(29L)
                     && list.size() == 4;
 
             if (passed) {
-                System.out.println("✅ Test prošao!");
+                System.out.println("✅ Test successful!");
             } else {
-                System.out.println("❌ Nedostaju faktori.");
+                System.out.println("❌ Missing factors.");
             }
         } else {
-            System.out.println("❌ Pogrešan tip rezultata.");
+            System.out.println("❌ Wrong result type.");
         }
     }
 }

@@ -100,7 +100,7 @@ public class Master {
                 }
             }
 
-            System.out.println("Prosti faktori: " + allFactors);
+            System.out.println("Prime factors: " + allFactors);
         }
 
         for (int i = 1; i < N; i++) {
