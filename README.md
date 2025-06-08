@@ -50,18 +50,3 @@ java Worker 2 4
 ```bash
 java Worker 3 4
 ```
-
-### 4. Testovi
-
-U folderu tests nalaze se testovi za ZeroTask i FactorTask.
-
-Kompajliranje:
-```bash
-javac tests/*.java
-```
-
-Pokretanje:
-```bash
-java tests.ZeroTest
-java tests.FactorTest
-```
